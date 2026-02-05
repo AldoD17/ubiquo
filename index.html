@@ -288,7 +288,7 @@
     <div id="passwordOverlay" class="password-overlay">
         <div class="password-modal">
             <h3>ubiquo</h3>
-            <p style="color: #666; margin-bottom: 24px; font-size: 14px;">Inserisci la password per accedere alla demo</p>
+            <p style="color: #666; margin-bottom: 24px; font-size: 14px;">Inserisci la tua password per accedere</p>
             <input type="password" id="passwordInput" placeholder="Password">
             <div id="errorMessage" class="error-message" style="display: none;">Password non corretta</div>
             <button onclick="checkPassword()">Accedi</button>
@@ -329,23 +329,71 @@
     </div>
 
     <script>
-        // ========== CONFIGURAZIONE ==========
-        const CONFIG = {
-            webhookUrl: 'https://n8n.srv846256.hstgr.cloud/webhook-test/33457445-9cd9-41c0-a605-a5f4b87569f4', // INSERISCI QUI L'URL DEL TUO WEBHOOK
-            password: 'ubiquo26' // CAMBIA QUESTA PASSWORD
+        // ========== CONFIGURAZIONE MULTI-UTENTE ==========
+        // Ogni utente ha una password univoca collegata al proprio webhook
+        
+        cconst USERS = {
+    'password_utente_1': {
+        webhookUrl: 'https://TUO_N8N_URL/webhook/utente1',
+        nome: 'Nome Utente 1'
+    },
+    'password_utente_2': {
+        webhookUrl: 'https://TUO_N8N_URL/webhook/utente2',
+        nome: 'Nome Utente 2'
+    },
+    'password_utente_3': {
+        webhookUrl: 'https://TUO_N8N_URL/webhook/utente3',
+        nome: 'Nome Utente 3'
+    }
+};
+        // ========== ISTRUZIONI PER LA CONFIGURAZIONE ==========
+        /*
+        
+        COME CONFIGURARE:
+        
+        1. Sostituisci le password ('cliente1', 'cliente2', 'cliente3') 
+           con le password che vuoi dare ai tuoi utenti
+        
+        2. Sostituisci gli URL dei webhook con i tuoi webhook n8n reali
+        
+        3. (Opzionale) Cambia il campo 'nome' per identificare meglio l'utente
+        
+        ESEMPIO:
+        
+        const USERS = {
+            'abc123': {
+                webhookUrl: 'https://n8n.tuodominio.com/webhook/mario-rossi',
+                nome: 'Mario Rossi'
+            },
+            'xyz789': {
+                webhookUrl: 'https://n8n.tuodominio.com/webhook/luca-bianchi',
+                nome: 'Luca Bianchi'
+            },
+            'qwerty456': {
+                webhookUrl: 'https://n8n.tuodominio.com/webhook/anna-verdi',
+                nome: 'Anna Verdi'
+            }
         };
+        
+        */
 
-        // ========== PASSWORD PROTECTION ==========
+        // ========== NON MODIFICARE SOTTO QUESTA LINEA ==========
+        
         let isAuthenticated = false;
+        let currentUser = null;
 
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
             const errorMsg = document.getElementById('errorMessage');
             
-            if (input === CONFIG.password) {
+            if (USERS[input]) {
                 isAuthenticated = true;
+                currentUser = USERS[input];
                 document.getElementById('passwordOverlay').style.display = 'none';
                 errorMsg.style.display = 'none';
+                
+                // Log per debug (rimuovi in produzione)
+                console.log('Utente autenticato:', currentUser.nome);
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
@@ -393,7 +441,7 @@
         }
 
         async function sendMessage() {
-            if (!isAuthenticated) return;
+            if (!isAuthenticated || !currentUser) return;
 
             const message = userInput.value.trim();
             if (!message) return;
@@ -410,14 +458,15 @@
             showLoading();
 
             try {
-                const response = await fetch(CONFIG.webhookUrl, {
+                const response = await fetch(currentUser.webhookUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         message: message,
-                        timestamp: new Date().toISOString()
+                        timestamp: new Date().toISOString(),
+                        user: currentUser.nome
                     })
                 });
 
