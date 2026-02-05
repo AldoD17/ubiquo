@@ -84,6 +84,8 @@
             padding: 24px 32px;
             border-top: 1px solid #E5E5E5;
             background: white;
+            position: relative;
+            bottom: 0;
         }
 
         .input-wrapper {
@@ -163,46 +165,55 @@
 
         .welcome {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px 40px;
             color: #666;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 600px;
         }
 
         .welcome h2 {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: 400;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: #1A1A1A;
         }
 
-        .welcome p {
-            font-size: 15px;
-            line-height: 1.6;
+        .welcome .tagline {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 48px;
+            font-weight: 300;
         }
 
         .examples {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 32px;
-        }
-
-        .example-btn {
-            background: #F5F5F5;
-            border: 1px solid #E5E5E5;
-            border-radius: 12px;
-            padding: 16px 20px;
+            gap: 16px;
             text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            color: #1A1A1A;
         }
 
-        .example-btn:hover {
-            background: white;
-            border-color: #2B2B2B;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        .example-item {
+            padding: 20px 24px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            border: 1px solid #F0F0F0;
+        }
+
+        .example-item h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1A1A1A;
+            margin-bottom: 6px;
+        }
+
+        .example-item p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
         }
 
         .password-overlay {
@@ -280,11 +291,18 @@
             .message {
                 max-width: 90%;
             }
+
+            .welcome {
+                padding: 40px 20px 20px;
+            }
+
+            .welcome h2 {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Password Protection -->
     <div id="passwordOverlay" class="password-overlay">
         <div class="password-modal">
             <h3>ubiquo</h3>
@@ -303,14 +321,16 @@
         <div class="chat-area" id="chatArea">
             <div class="welcome">
                 <h2>Benvenuto in Ubiquo</h2>
-                <p>Chiedi informazioni su prodotti, clienti e listini.<br>Prova con uno degli esempi qui sotto:</p>
+                <p class="tagline">Talk to your data</p>
                 <div class="examples">
-                    <button class="example-btn" onclick="sendExample('Quanto costa al kg il prodotto CR07F per il cliente Mimmo SRL?')">
-                        💰 Prezzo prodotto CR07F per Mimmo SRL
-                    </button>
-                    <button class="example-btn" onclick="sendExample('Mostrami le informazioni del cliente Buonovero SRL')">
-                        👤 Informazioni cliente Buonovero SRL
-                    </button>
+                    <div class="example-item">
+                        <h4>💡 Esplora i tuoi dati</h4>
+                        <p>Prova a chiedere informazioni su clienti, prodotti o listini.</p>
+                    </div>
+                    <div class="example-item">
+                        <h4>💰 Prezzi dinamici</h4>
+                        <p>Chiedi il prezzo di un prodotto per un determinato cliente.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -329,56 +349,21 @@
     </div>
 
     <script>
-        // ========== CONFIGURAZIONE MULTI-UTENTE ==========
-        // Ogni utente ha una password univoca collegata al proprio webhook
-        
-        cconst USERS = {
-    'password_utente_1': {
-        webhookUrl: 'https://TUO_N8N_URL/webhook/utente1',
-        nome: 'Nome Utente 1'
-    },
-    'password_utente_2': {
-        webhookUrl: 'https://TUO_N8N_URL/webhook/utente2',
-        nome: 'Nome Utente 2'
-    },
-    'password_utente_3': {
-        webhookUrl: 'https://TUO_N8N_URL/webhook/utente3',
-        nome: 'Nome Utente 3'
-    }
-};
-        // ========== ISTRUZIONI PER LA CONFIGURAZIONE ==========
-        /*
-        
-        COME CONFIGURARE:
-        
-        1. Sostituisci le password ('cliente1', 'cliente2', 'cliente3') 
-           con le password che vuoi dare ai tuoi utenti
-        
-        2. Sostituisci gli URL dei webhook con i tuoi webhook n8n reali
-        
-        3. (Opzionale) Cambia il campo 'nome' per identificare meglio l'utente
-        
-        ESEMPIO:
-        
         const USERS = {
-            'abc123': {
-                webhookUrl: 'https://n8n.tuodominio.com/webhook/mario-rossi',
-                nome: 'Mario Rossi'
+            'password_utente_1': {
+                webhookUrl: 'https://TUO_N8N_URL/webhook/utente1',
+                nome: 'Nome Utente 1'
             },
-            'xyz789': {
-                webhookUrl: 'https://n8n.tuodominio.com/webhook/luca-bianchi',
-                nome: 'Luca Bianchi'
+            'password_utente_2': {
+                webhookUrl: 'https://TUO_N8N_URL/webhook/utente2',
+                nome: 'Nome Utente 2'
             },
-            'qwerty456': {
-                webhookUrl: 'https://n8n.tuodominio.com/webhook/anna-verdi',
-                nome: 'Anna Verdi'
+            'password_utente_3': {
+                webhookUrl: 'https://TUO_N8N_URL/webhook/utente3',
+                nome: 'Nome Utente 3'
             }
         };
-        
-        */
 
-        // ========== NON MODIFICARE SOTTO QUESTA LINEA ==========
-        
         let isAuthenticated = false;
         let currentUser = null;
 
@@ -391,27 +376,21 @@
                 currentUser = USERS[input];
                 document.getElementById('passwordOverlay').style.display = 'none';
                 errorMsg.style.display = 'none';
-                
-                // Log per debug (rimuovi in produzione)
-                console.log('Utente autenticato:', currentUser.nome);
             } else {
                 errorMsg.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
             }
         }
 
-        // Allow Enter key on password input
         document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
 
-        // ========== CHAT FUNCTIONALITY ==========
         const chatArea = document.getElementById('chatArea');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
 
         function addMessage(text, isUser) {
-            // Remove welcome message on first interaction
             const welcome = chatArea.querySelector('.welcome');
             if (welcome) welcome.remove();
 
@@ -446,15 +425,12 @@
             const message = userInput.value.trim();
             if (!message) return;
 
-            // Disable input during processing
             userInput.disabled = true;
             sendButton.disabled = true;
 
-            // Add user message
             addMessage(message, true);
             userInput.value = '';
 
-            // Show loading
             showLoading();
 
             try {
@@ -478,7 +454,6 @@
                 
                 removeLoading();
                 
-                // Adjust based on your webhook response structure
                 const botResponse = data.response || data.output || data.message || 'Risposta ricevuta';
                 addMessage(botResponse, false);
 
@@ -487,19 +462,12 @@
                 addMessage('⚠️ Si è verificato un errore. Riprova più tardi.', false);
                 console.error('Error:', error);
             } finally {
-                // Re-enable input
                 userInput.disabled = false;
                 sendButton.disabled = false;
                 userInput.focus();
             }
         }
 
-        function sendExample(exampleText) {
-            userInput.value = exampleText;
-            sendMessage();
-        }
-
-        // Focus input on load
         window.addEventListener('load', () => {
             userInput.focus();
         });
