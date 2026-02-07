@@ -206,7 +206,7 @@
 
         .example-item p {
             font-size: 13px;
-            color: #666;
+            color: #667;
             line-height: 1.5;
         }
 
@@ -439,11 +439,23 @@
                 }
 
                 const data = await response.json();
-                
+
                 removeLoading();
-                
-                const botResponse = data.response || data.output || data.message || 'Risposta ricevuta';
-                addMessage(botResponse, false);
+
+                let botResponse;
+                if (data.response) {
+                botResponse = data.response;
+                } else if (data.richiesta_riformulata) {
+                 botResponse = data.richiesta_riformulata;
+                } else if (data.output) {
+                  botResponse = data.output;
+                } else if (data.message) {
+                  botResponse = data.message;
+                } else {
+                botResponse = 'Risposta ricevuta dal sistema';
+                }
+
+addMessage(botResponse, false);
 
             } catch (error) {
                 removeLoading();
